@@ -5,6 +5,8 @@ using UnityEngine;
 public class PlayerGunplay : MonoBehaviour
 {
     private Rigidbody2D _playerRigidbody2D;
+    private SpriteRenderer _playerSpriteRenderer;
+    private PlayerMovement _playerMovement;
 
     [SerializeField] private GameObject _shotgunHitbox;
     [SerializeField] private float _ShotgunHitboxSpawnOffset = 2.13f;
@@ -14,8 +16,6 @@ public class PlayerGunplay : MonoBehaviour
     private GameObject _target;
     private TargetMovement _targetMovement;
 
-    private SpriteRenderer _playerSpriteRenderer;
-
     private bool _hasGun = false;
     private bool _touchingGun = false;
 
@@ -23,11 +23,12 @@ public class PlayerGunplay : MonoBehaviour
     void Start()
     {
         _playerRigidbody2D = gameObject.GetComponent<Rigidbody2D>();
+        _playerMovement = gameObject.GetComponent<PlayerMovement>();
+
+        _playerSpriteRenderer = gameObject.GetComponentInChildren<SpriteRenderer>();
 
         _target = GameObject.FindGameObjectWithTag("Target");
         _targetMovement = _target.GetComponent<TargetMovement>();
-
-        _playerSpriteRenderer = gameObject.GetComponentInChildren<SpriteRenderer>();
     }
 
     public void ChangeSpriteColor(Color color)
@@ -54,7 +55,18 @@ public class PlayerGunplay : MonoBehaviour
     /// <summary>
     /// picks up the gun
     /// </summary>
-    private void PickupGun()
+    private void PickupGunFromGround()
+    {
+        if (false) //timer
+        {
+            _playerMovement.SetMovementFrozen(true);
+        }
+        _hasGun = true;
+
+        ChangeSpriteColor(Color.black);
+    }
+
+    private void PickupGunFromAir()
     {
         _hasGun = true;
 
@@ -81,7 +93,7 @@ public class PlayerGunplay : MonoBehaviour
         {
             if(_touchingGun)
             {
-                PickupGun();
+                PickupGunFromGround();
             }
         }
     }

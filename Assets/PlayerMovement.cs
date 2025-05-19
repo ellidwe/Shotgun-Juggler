@@ -14,9 +14,22 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 _currentMovement;
     private Vector2 _userMousePos;
 
+    private bool _movementFrozen;
+    private bool _turningFrozen;
+
     private void Start()
     {
         _playerRigidbody2D = gameObject.GetComponent<Rigidbody2D>();
+    }
+
+    public void SetMovementFrozen(bool _movFrozen)
+    {
+        _movementFrozen = _movFrozen;
+    }
+
+    public void SetTurningFrozen(bool _turnFrozen)
+    {
+        _turningFrozen = _turnFrozen;
     }
 
     /// <summary>
@@ -52,7 +65,10 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private void MoveViaDeterminedMovement()
     {
-        _playerRigidbody2D.MovePosition(_playerRigidbody2D.position + _currentMovement * _moveSpd * Time.fixedDeltaTime);
+        if(!_movementFrozen)
+        {
+            _playerRigidbody2D.MovePosition(_playerRigidbody2D.position + _currentMovement * _moveSpd * Time.fixedDeltaTime);
+        }
     }
 
     private void AssignMousePosition()
@@ -65,10 +81,13 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     private void RotateToMouse()
     {
-        Vector2 dirToLook = _userMousePos - _playerRigidbody2D.position;
-        float angle = Mathf.Atan2(dirToLook.y, dirToLook.x) * Mathf.Rad2Deg;
+        if(!_turningFrozen)
+        {
+            Vector2 dirToLook = _userMousePos - _playerRigidbody2D.position;
+            float angle = Mathf.Atan2(dirToLook.y, dirToLook.x) * Mathf.Rad2Deg;
 
-        _playerRigidbody2D.rotation = angle;
+            _playerRigidbody2D.rotation = angle;
+        }
     }
 
     // Update is called once per frame

@@ -32,7 +32,7 @@ public class GunScript : MonoBehaviour
         _targetMovement.MakeTargetTransparent();
     }
 
-    public void DisableGun()
+    public void DisappearGun()
     {
         _renderer.enabled = false;
         _collider.enabled = false;
@@ -43,7 +43,7 @@ public class GunScript : MonoBehaviour
     {
         if (_playerGunplay.IsHasGun())
         {
-            DisableGun();
+            DisappearGun();
         }
     }
 }

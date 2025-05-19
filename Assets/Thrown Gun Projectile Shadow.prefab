@@ -97,4 +97,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7cc9ea72630a9d4e96794126a55f48e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _shadowMoveSpeed: 2.53
+  _shadowMoveSpeed: 2.38
+  _distanceFromEndPositionToDeleteShadow: 0.12
