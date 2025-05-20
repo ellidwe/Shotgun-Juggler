@@ -6,6 +6,7 @@ public class ThrownGun : MonoBehaviour
 {
     [SerializeField] private float _projectileHeight = 10f;
     [SerializeField] private float _projectileSpeed = 5f;
+    [SerializeField] private float _timeThresholdToAllowAirPickup;
 
     [SerializeField] private GameObject _thrownGunProjectileShadow;
 
@@ -18,6 +19,7 @@ public class ThrownGun : MonoBehaviour
     private Vector3 _startPos;
     private Vector3 _endPos;
     private float _projectileTimer = 1;
+    private bool pickupable = false;
 
     private void Start()
     {
@@ -55,7 +57,15 @@ public class ThrownGun : MonoBehaviour
         Vector3 newProjectilePos = CalculateTrajectory(_startPos, _endPos, _projectileTimer);
         transform.position = newProjectilePos;
 
+        _gun.transform.position = gameObject.transform.position;
+
         _projectileTimer += _projectileSpeed * Time.deltaTime;
+    }
+
+    public void AllowAirPickup()
+    {
+        pickupable = true;
+        _gunScript.EnableGunCollider();
     }
 
     private void LandProjectile()
@@ -72,6 +82,10 @@ public class ThrownGun : MonoBehaviour
     {
         if(_projectileTimer < 1)
         {
+            if(_projectileTimer > _timeThresholdToAllowAirPickup && !pickupable)
+            {
+                AllowAirPickup();
+            }
             MoveToNextPositionAndUpdateTimer();
         }
         else

@@ -11,6 +11,9 @@ public class PlayerGunplay : MonoBehaviour
     [SerializeField] private GameObject _shotgunHitbox;
     [SerializeField] private float _ShotgunHitboxSpawnOffset = 2.13f;
 
+    [SerializeField] private GameObject _gun;
+    private GunScript _gunScript;
+
     [SerializeField] private GameObject _thrownGun;
 
     private GameObject _target;
@@ -18,12 +21,15 @@ public class PlayerGunplay : MonoBehaviour
 
     private bool _hasGun = false;
     private bool _touchingGun = false;
+    [SerializeField] private float _groundPickupMovementLockTimer;
 
     // Start is called before the first frame update
     void Start()
     {
         _playerRigidbody2D = gameObject.GetComponent<Rigidbody2D>();
         _playerMovement = gameObject.GetComponent<PlayerMovement>();
+
+        _gunScript = _gun.GetComponent<GunScript>();
 
         _playerSpriteRenderer = gameObject.GetComponentInChildren<SpriteRenderer>();
 
@@ -49,6 +55,8 @@ public class PlayerGunplay : MonoBehaviour
 
         _hasGun = false;
 
+        _gunScript.SetInAir(true);
+
         ChangeSpriteColor(Color.grey);
     }
 
@@ -57,19 +65,31 @@ public class PlayerGunplay : MonoBehaviour
     /// </summary>
     private void PickupGunFromGround()
     {
-        if (false) //timer
-        {
-            _playerMovement.SetMovementFrozen(true);
-        }
-        _hasGun = true;
+        _gunScript.DisappearGun();
+        StartCoroutine(GroundPickupFreeze());
+    }
 
+    public IEnumerator GroundPickupFreeze()
+    {
+        _playerMovement.SetMovementFrozen(true);
+        _playerMovement.SetTurningFrozen(true);
+
+        _targetMovement.MakeTargetTransparent();
+
+        yield return new WaitForSeconds(_groundPickupMovementLockTimer);
+
+        _playerMovement.SetMovementFrozen(false);
+        _playerMovement.SetTurningFrozen(false);
+
+        _targetMovement.MakeTargetOpaque();
+
+        _hasGun = true;
         ChangeSpriteColor(Color.black);
     }
 
     private void PickupGunFromAir()
     {
         _hasGun = true;
-
         ChangeSpriteColor(Color.black);
     }
 
@@ -91,9 +111,16 @@ public class PlayerGunplay : MonoBehaviour
 
         if (Input.GetMouseButtonDown(1)) //if right click
         {
-            if(_touchingGun)
+            if(_touchingGun) 
             {
-                PickupGunFromGround();
+                if (_gunScript.IsOnGround()) //if gun on ground
+                {
+                    PickupGunFromGround();
+                }
+                else //if gun in air
+                {
+                    PickupGunFromAir();
+                }
             }
         }
     }
