@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6119917077692386832}
   - component: {fileID: 1332198787894619535}
   - component: {fileID: 8443143814933819312}
+  - component: {fileID: 8699212024183897379}
   m_Layer: 0
   m_Name: Thrown Gun Projectile Shadow
   m_TagString: ThrownGunProjectileShadow
@@ -99,3 +100,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _shadowMoveSpeed: 2.41
   _distanceFromEndPositionToDeleteShadow: 0.12
+--- !u!114 &8699212024183897379
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6499710275933656554}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3c4ea943e6cbd94ba44e6641de15de1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _targetDistanceFromPlayer: 0

@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 4134766250667500552}
   m_Layer: 0
   m_Name: ThrownGun
-  m_TagString: Untagged
+  m_TagString: ThrownGun
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -148,5 +148,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _projectileHeight: 5
   _projectileSpeed: 0.78
-  _timeThresholdToAllowAirPickup: 0.8
+  _timeThresholdToAllowAirPickup: 0.93
   _thrownGunProjectileShadow: {fileID: 6499710275933656554, guid: 83fdaf6b4c43c7a449f9cd4050d8d59b, type: 3}

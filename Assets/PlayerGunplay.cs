@@ -21,6 +21,8 @@ public class PlayerGunplay : MonoBehaviour
 
     private bool _hasGun = false;
     private bool _touchingGun = false;
+    private bool _touchingTarget = false;
+
     [SerializeField] private float _groundPickupMovementLockTimer;
 
     // Start is called before the first frame update
@@ -89,6 +91,11 @@ public class PlayerGunplay : MonoBehaviour
 
     private void PickupGunFromAir()
     {
+        _gunScript.SetGunPickupable(false);
+
+        Destroy(GameObject.FindGameObjectWithTag("ThrownGun"));
+        Destroy(GameObject.FindGameObjectWithTag("ThrownGunProjectileShadow"));
+
         _hasGun = true;
         ChangeSpriteColor(Color.black);
     }
@@ -100,7 +107,7 @@ public class PlayerGunplay : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
+    {   
         if (Input.GetMouseButtonDown(0)) //if left click
         {
             if(_hasGun)
@@ -111,16 +118,13 @@ public class PlayerGunplay : MonoBehaviour
 
         if (Input.GetMouseButtonDown(1)) //if right click
         {
-            if(_touchingGun) 
+            if(_touchingGun && _gunScript.IsOnGround()) 
             {
-                if (_gunScript.IsOnGround()) //if gun on ground
-                {
-                    PickupGunFromGround();
-                }
-                else //if gun in air
-                {
-                    PickupGunFromAir();
-                }
+                PickupGunFromGround();
+            }
+            else if(_touchingTarget && _gunScript.IsGunPickupable())
+            {
+                PickupGunFromAir();
             }
         }
     }
@@ -131,6 +135,10 @@ public class PlayerGunplay : MonoBehaviour
         {
             _touchingGun = true;
         }
+        if (collision.tag.Equals("Target"))
+        {
+            _touchingTarget = true;
+        }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -138,6 +146,10 @@ public class PlayerGunplay : MonoBehaviour
         if (collision.tag.Equals("Gun"))
         {
             _touchingGun = false;
+        }
+        if (collision.tag.Equals("Target"))
+        {
+            _touchingTarget = false;
         }
     }
 }

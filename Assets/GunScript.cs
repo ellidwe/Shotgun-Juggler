@@ -15,6 +15,7 @@ public class GunScript : MonoBehaviour
 
     private bool _onGround = true;
     private bool _inAir = false;
+    private bool _pickupableFromAir;
 
     void Start()
     {
@@ -49,8 +50,20 @@ public class GunScript : MonoBehaviour
         _onGround = !air;
     }
 
+    public bool IsGunPickupable()
+    {
+        return _pickupableFromAir;
+    }
+
+    public void SetGunPickupable(bool pickupable)
+    {
+        _pickupableFromAir = pickupable;
+    }
+
     public void PlaceGunOnGround()
     {
+        _pickupableFromAir = false;
+
         _renderer.enabled = true;
         _collider.enabled = true;
         SetOnGround(true);
@@ -62,11 +75,6 @@ public class GunScript : MonoBehaviour
     {
         _renderer.enabled = false;
         _collider.enabled = false;
-    }
-
-    public void EnableGunCollider()
-    {
-        _collider.enabled = true;
     }
 
     // Update is called once per frame
