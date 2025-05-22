@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ThrownGun : MonoBehaviour
+public class ThrownGunScript : MonoBehaviour
 {
     [SerializeField] private float _projectileHeight = 10f;
     [SerializeField] private float _projectileSpeed = 5f;
@@ -10,18 +10,26 @@ public class ThrownGun : MonoBehaviour
 
     [SerializeField] private GameObject _thrownGunProjectileShadow;
 
-    protected GameObject _target;
+    private SpriteRenderer _thrownGunSpriteRenderer;
+
+    private GameObject _target;
     private TargetMovement _targetMovement;
 
     private GameObject _gun;
     private GunScript _gunScript;
 
     private Vector3 _startPos;
-    protected Vector3 _endPos;
-    protected float _projectileTimer = 1;
+    private Vector3 _endPos;
+    private float _projectileTimer = 1;
+
+    private float _timeCatchable;
 
     private void Start()
     {
+        _timeCatchable = 0;
+
+        _thrownGunSpriteRenderer = gameObject.GetComponent<SpriteRenderer>();
+
         _gun = GameObject.FindGameObjectWithTag("Gun");
         _gunScript = _gun.GetComponent<GunScript>();
 
@@ -63,6 +71,8 @@ public class ThrownGun : MonoBehaviour
 
     private void LandProjectile()
     {
+        Debug.Log(_timeCatchable);
+
         _gun.transform.position = gameObject.transform.position;
         _gunScript.PlaceGunOnGround();
 
@@ -82,7 +92,10 @@ public class ThrownGun : MonoBehaviour
         {
             if(_projectileTimer > _timeThresholdToAllowAirPickup)
             {
+                _timeCatchable += Time.deltaTime;
+                Debug.Log(_timeCatchable);
                 _gunScript.SetGunPickupable(true);
+                _thrownGunSpriteRenderer.color = Color.yellow;
             }
             MoveToNextPositionAndUpdateTimer();
         }

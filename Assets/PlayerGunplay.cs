@@ -6,6 +6,7 @@ public class PlayerGunplay : MonoBehaviour
 {
     private Rigidbody2D _playerRigidbody2D;
     private SpriteRenderer _playerSpriteRenderer;
+    private Renderer _missedJuggleIndicatorRenderer;
     private PlayerMovement _playerMovement;
 
     [SerializeField] private GameObject _shotgunHitbox;
@@ -34,6 +35,7 @@ public class PlayerGunplay : MonoBehaviour
         _gunScript = _gun.GetComponent<GunScript>();
 
         _playerSpriteRenderer = gameObject.GetComponentInChildren<SpriteRenderer>();
+        //ADD MISSED JUGGLE INDICATOR RENDERER
 
         _target = GameObject.FindGameObjectWithTag("Target");
         _targetMovement = _target.GetComponent<TargetMovement>();
@@ -105,6 +107,11 @@ public class PlayerGunplay : MonoBehaviour
         return _hasGun;
     }
 
+    private void IndicateMissedJuggle()
+    {
+        //IMPLEMENT
+    }
+
     // Update is called once per frame
     void Update()
     {   
@@ -122,9 +129,16 @@ public class PlayerGunplay : MonoBehaviour
             {
                 PickupGunFromGround();
             }
-            else if(_touchingTarget && _gunScript.IsGunPickupable())
+            else if(_gunScript.IsInAir())
             {
-                PickupGunFromAir();
+                if (_touchingTarget && _gunScript.IsGunPickupable())
+                {
+                    PickupGunFromAir();
+                }
+                else
+                {
+                    IndicateMissedJuggle();
+                }
             }
         }
     }

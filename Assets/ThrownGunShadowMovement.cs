@@ -4,51 +4,45 @@ using UnityEngine;
 
 public class ThrownGunShadowMovement : MonoBehaviour
 {
-    [SerializeField] private float _shadowMoveSpeed;
     [SerializeField] private float _distanceFromEndPositionToDeleteShadow;
 
     private GameObject _target;
-    private TargetMovement _targetMovement;
-
-    private GameObject _player;
 
     private GameObject _thrownGun;
-    private ThrownGun _thrownGunScript;
-
-    private Vector3 _movementDirection;
+    private ThrownGunScript _thrownGunScript;
 
     private Vector3 _startPosition;
     private Vector3 _endPosition;
-    private Vector3 _distance;
+    private Vector3 _distanceVector;
 
     private void Start()
     {
-        _thrownGun = GameObject.FindGameObjectWithTag("ThrownGun");
-        _thrownGunScript = _thrownGun.GetComponent<ThrownGun>();
-
-        _startPosition = gameObject.transform.position;
-        _distance = new Vector3(_endPosition.x - _startPosition.x, _endPosition.y - _startPosition.y, 0);
-
         _target = GameObject.FindGameObjectWithTag("Target");
         _endPosition = _target.transform.position;
-        _targetMovement = _target.GetComponent<TargetMovement>();
 
-        _player = GameObject.FindGameObjectWithTag("Player");
+        _thrownGun = GameObject.FindGameObjectWithTag("ThrownGun");
+        _thrownGunScript = _thrownGun.GetComponent<ThrownGunScript>();
 
-        _movementDirection = new Vector3((_target.transform.position.x - _player.transform.position.x) / _targetMovement.GetTargetDistanceFromPlayer(), (_target.transform.position.y - _player.transform.position.y) / _targetMovement.GetTargetDistanceFromPlayer(), 0);        
+        _startPosition = gameObject.transform.position;
+
+        _distanceVector = CreateDistanceVector(_startPosition, _endPosition);
     }
 
-    private void MoveToNewPosition()
+    private Vector3 CreateDistanceVector(Vector3 startPoint, Vector3 endPoint)
     {
-        transform.position = transform.position + new Vector3(_distance.x * _thrownGunScript.GetProjectileTimer(), _distance.y * _thrownGunScript.GetProjectileTimer(), 0); //DOESNT WORK CLASS NEEDS LIKE FULL REWRITE LMAO
+        return new Vector3(endPoint.x - startPoint.x, endPoint.y - startPoint.y, 0);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void MoveShadowToNewPosition()
     {
-        MoveToNewPosition();
+        gameObject.transform.position = _startPosition + new Vector3(_distanceVector.x * _thrownGunScript.GetProjectileTimer(), _distanceVector.y * _thrownGunScript.GetProjectileTimer(), 0);
+    }
 
-        if(Vector3.Distance(transform.position, _endPosition) <= _distanceFromEndPositionToDeleteShadow)
+    private void Update()
+    {
+        MoveShadowToNewPosition();
+
+        if(Vector3.Distance(gameObject.transform.position, _endPosition) <= _distanceFromEndPositionToDeleteShadow)
         {
             Destroy(gameObject);
         }
