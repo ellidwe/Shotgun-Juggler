@@ -147,6 +147,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _projectileHeight: 5
-  _projectileSpeed: 0.9
-  _timeThresholdToAllowAirPickup: 0.96
+  _projectileSpeed: 1
+  _timeThresholdToAllowAirPickup: 0.955
   _thrownGunProjectileShadow: {fileID: 6499710275933656554, guid: 83fdaf6b4c43c7a449f9cd4050d8d59b, type: 3}

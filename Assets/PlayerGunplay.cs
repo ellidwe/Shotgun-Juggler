@@ -6,7 +6,7 @@ public class PlayerGunplay : MonoBehaviour
 {
     private Rigidbody2D _playerRigidbody2D;
     private SpriteRenderer _playerSpriteRenderer;
-    private Renderer _missedJuggleIndicatorRenderer;
+    private Renderer _missedJuggleRenderer;
     private PlayerMovement _playerMovement;
 
     [SerializeField] private GameObject _shotgunHitbox;
@@ -25,6 +25,7 @@ public class PlayerGunplay : MonoBehaviour
     private bool _touchingTarget = false;
 
     [SerializeField] private float _groundPickupMovementLockTimer;
+    [SerializeField] private float _timeToDisplayMissedJuggleIndicator;
 
     // Start is called before the first frame update
     void Start()
@@ -34,8 +35,9 @@ public class PlayerGunplay : MonoBehaviour
 
         _gunScript = _gun.GetComponent<GunScript>();
 
-        _playerSpriteRenderer = gameObject.GetComponentInChildren<SpriteRenderer>();
-        //ADD MISSED JUGGLE INDICATOR RENDERER
+        _playerSpriteRenderer = transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>();
+        _missedJuggleRenderer = transform.GetChild(2).gameObject.GetComponent<Renderer>();
+        _missedJuggleRenderer.enabled = false;
 
         _target = GameObject.FindGameObjectWithTag("Target");
         _targetMovement = _target.GetComponent<TargetMovement>();
@@ -107,9 +109,19 @@ public class PlayerGunplay : MonoBehaviour
         return _hasGun;
     }
 
-    private void IndicateMissedJuggle()
+    private void IndicateMissedJuggleAndDisallowJuggle()
     {
-        //IMPLEMENT
+        _gunScript.SetGunPickupable(false);
+        StartCoroutine(ShowMissedJuggleIndicator());
+    }
+
+    public IEnumerator ShowMissedJuggleIndicator()
+    {
+        _missedJuggleRenderer.enabled = true;
+
+        yield return new WaitForSeconds(_timeToDisplayMissedJuggleIndicator);
+
+        _missedJuggleRenderer.enabled = false;
     }
 
     // Update is called once per frame
@@ -137,7 +149,7 @@ public class PlayerGunplay : MonoBehaviour
                 }
                 else
                 {
-                    IndicateMissedJuggle();
+                    IndicateMissedJuggleAndDisallowJuggle();
                 }
             }
         }

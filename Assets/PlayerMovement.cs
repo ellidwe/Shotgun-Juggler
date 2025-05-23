@@ -4,9 +4,12 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    [SerializeField] private float _moveSpd = 5f;
+    [SerializeField] private float _moveSpd;
+    [SerializeField] private float _dashDistance;
+    [SerializeField] private float _dashDuration;
 
     private Rigidbody2D _playerRigidbody2D;
+    private SpriteRenderer _playerSpriteRenderer;
 
     [SerializeField] private Camera _sceneCamera;
 
@@ -17,9 +20,17 @@ public class PlayerMovement : MonoBehaviour
     private bool _movementFrozen;
     private bool _turningFrozen;
 
+    private bool _dashing = false;
+    private float _dashTimer;
+    private Vector3 _dashStartPoint;
+    private Vector3 _dashPath;
+
+    private int _dashStocks = 100; //test value
+
     private void Start()
     {
         _playerRigidbody2D = gameObject.GetComponent<Rigidbody2D>();
+        _playerSpriteRenderer = transform.GetChild(0).GetComponent<SpriteRenderer>();
     }
 
     public void SetMovementFrozen(bool _movFrozen)
@@ -90,10 +101,53 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    private void InitiateDash()
+    {
+        _dashStocks -= 1;
+
+        _movementFrozen = true;
+
+        _dashStartPoint = _playerRigidbody2D.position;
+        _dashPath = new Vector3(_lastDirectionMoved.x * _dashDistance, _lastDirectionMoved.y * _dashDistance, 0);
+
+        _playerSpriteRenderer.color = Color.blue;
+
+        _dashing = true;
+        _dashTimer = 0;
+    }
+
+    private void moveViaDash(Vector3 dashPath)
+    {
+        if(_dashTimer < _dashDuration)
+        {
+            _dashTimer += Time.deltaTime;
+
+            _playerRigidbody2D.position = _dashStartPoint + new Vector3(dashPath.x * (_dashTimer / _dashDuration), dashPath.y * (_dashTimer / _dashDuration), 0);
+        }
+        else
+        {
+            _dashing = false;
+            _movementFrozen = false;
+            _playerSpriteRenderer.color = Color.gray;
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
-        ChangeMovement();
+        if (Input.GetKeyDown(KeyCode.Space) && _dashStocks > 0 && !_dashing)
+        {
+            InitiateDash();
+        }
+
+        if(_dashing)
+        {
+            moveViaDash(_dashPath);
+        }
+        else
+        {
+            ChangeMovement();
+        }
         AssignMousePosition();
     }
 
