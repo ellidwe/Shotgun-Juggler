@@ -5,12 +5,13 @@ using UnityEngine;
 public class PlayerGunplay : MonoBehaviour
 {
     private Rigidbody2D _playerRigidbody2D;
-    private SpriteRenderer _playerSpriteRenderer;
-    private Renderer _missedJuggleRenderer;
     private PlayerMovement _playerMovement;
 
+    private SpriteRenderer _playerSpriteRenderer;
+    private Renderer _missedJuggleRenderer;
+
     [SerializeField] private GameObject _shotgunHitbox;
-    [SerializeField] private float _ShotgunHitboxSpawnOffset = 2.13f;
+    [SerializeField] private float _ShotgunHitboxSpawnOffset;
 
     [SerializeField] private GameObject _gun;
     private GunScript _gunScript;
@@ -20,12 +21,13 @@ public class PlayerGunplay : MonoBehaviour
     private GameObject _target;
     private TargetMovement _targetMovement;
 
+    [SerializeField] private float _groundPickupMovementLockTimer;
+    [SerializeField] private float _timeToDisplayMissedJuggleIndicator;
+
     private bool _hasGun = false;
     private bool _touchingGun = false;
     private bool _touchingTarget = false;
-
-    [SerializeField] private float _groundPickupMovementLockTimer;
-    [SerializeField] private float _timeToDisplayMissedJuggleIndicator;
+    private bool _airPickupPermitted;
 
     // Start is called before the first frame update
     void Start()
@@ -33,11 +35,11 @@ public class PlayerGunplay : MonoBehaviour
         _playerRigidbody2D = gameObject.GetComponent<Rigidbody2D>();
         _playerMovement = gameObject.GetComponent<PlayerMovement>();
 
-        _gunScript = _gun.GetComponent<GunScript>();
-
         _playerSpriteRenderer = transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>();
         _missedJuggleRenderer = transform.GetChild(2).gameObject.GetComponent<Renderer>();
         _missedJuggleRenderer.enabled = false;
+
+        _gunScript = _gun.GetComponent<GunScript>();
 
         _target = GameObject.FindGameObjectWithTag("Target");
         _targetMovement = _target.GetComponent<TargetMovement>();
@@ -56,10 +58,14 @@ public class PlayerGunplay : MonoBehaviour
     {
         _targetMovement.LockTargetPosition();
 
-        Instantiate(_shotgunHitbox, _playerRigidbody2D.position + new Vector2(_ShotgunHitboxSpawnOffset * Mathf.Cos(_playerRigidbody2D.rotation * Mathf.Deg2Rad), _ShotgunHitboxSpawnOffset * Mathf.Sin(_playerRigidbody2D.rotation * Mathf.Deg2Rad)), transform.rotation);
+
+        Vector2 shotgunHitboxSpawnPos = _playerRigidbody2D.position + new Vector2(_ShotgunHitboxSpawnOffset * Mathf.Cos(_playerRigidbody2D.rotation * Mathf.Deg2Rad), _ShotgunHitboxSpawnOffset * Mathf.Sin(_playerRigidbody2D.rotation * Mathf.Deg2Rad));
+        Instantiate(_shotgunHitbox, shotgunHitboxSpawnPos, transform.rotation);
+
         Instantiate(_thrownGun, _playerRigidbody2D.position, Quaternion.identity);
 
         _hasGun = false;
+        _airPickupPermitted = true;
 
         _gunScript.SetInAir(true);
 
@@ -75,7 +81,7 @@ public class PlayerGunplay : MonoBehaviour
         StartCoroutine(GroundPickupFreeze());
     }
 
-    public IEnumerator GroundPickupFreeze()
+    private IEnumerator GroundPickupFreeze()
     {
         _playerMovement.SetMovementFrozen(true);
         _playerMovement.SetTurningFrozen(true);
@@ -103,25 +109,23 @@ public class PlayerGunplay : MonoBehaviour
         _hasGun = true;
         ChangeSpriteColor(Color.black);
     }
-
-    public bool IsHasGun()
-    {
-        return _hasGun;
-    }
-
     private void IndicateMissedJuggleAndDisallowJuggle()
     {
-        _gunScript.SetGunPickupable(false);
+        _airPickupPermitted = false;
         StartCoroutine(ShowMissedJuggleIndicator());
     }
-
-    public IEnumerator ShowMissedJuggleIndicator()
+    private IEnumerator ShowMissedJuggleIndicator()
     {
         _missedJuggleRenderer.enabled = true;
 
         yield return new WaitForSeconds(_timeToDisplayMissedJuggleIndicator);
 
         _missedJuggleRenderer.enabled = false;
+    }
+
+    public bool IsHasGun()
+    {
+        return _hasGun;
     }
 
     // Update is called once per frame
@@ -143,7 +147,7 @@ public class PlayerGunplay : MonoBehaviour
             }
             else if(_gunScript.IsInAir())
             {
-                if (_touchingTarget && _gunScript.IsGunPickupable())
+                if (_touchingTarget && _gunScript.IsGunPickupable() && _airPickupPermitted)
                 {
                     PickupGunFromAir();
                 }

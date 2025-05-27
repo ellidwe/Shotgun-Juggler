@@ -43,6 +43,11 @@ public class PlayerMovement : MonoBehaviour
         _turningFrozen = _turnFrozen;
     }
 
+    public Vector2 GetLastDirectionMoved()
+    {
+        return _lastDirectionMoved;
+    }
+
     /// <summary>
     /// Gets input and adjusts movement instance variable, called in update to change player position
     /// based on current input, changes _lastDirMoved depending on what the last direction the player moved was
@@ -64,11 +69,6 @@ public class PlayerMovement : MonoBehaviour
         {
             _lastDirectionMoved = _currentMovement;
         }
-    }
-
-    public Vector2 GetLastDirectionMoved()
-    {
-        return _lastDirectionMoved;
     }
 
     /// <summary>

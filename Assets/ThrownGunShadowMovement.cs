@@ -25,6 +25,7 @@ public class ThrownGunShadowMovement : MonoBehaviour
 
         _startPosition = gameObject.transform.position;
 
+        //Creates vector between the position at which the shadow was instantiated and its destination
         _distanceVector = CreateDistanceVector(_startPosition, _endPosition);
     }
 
