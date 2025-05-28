@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 1965404266041482832}
   - component: {fileID: 3515805264583750609}
   - component: {fileID: 2263071552869256545}
+  - component: {fileID: 5835497312999087432}
   m_Layer: 0
   m_Name: Shotgun Hitbox
-  m_TagString: Untagged
+  m_TagString: ShotgunHitbox
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -98,3 +99,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _shotgunHitboxDurationBeforeDespawn: 0.1
+--- !u!70 &5835497312999087432
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8390530232162017651}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: -0.0014916654, y: -0.001953671}
+  m_Size: {x: 0.99099463, y: 0.9809465}
+  m_Direction: 1

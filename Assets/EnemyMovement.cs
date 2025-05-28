@@ -14,14 +14,9 @@ public class EnemyMovement : MonoBehaviour
         _player = GameObject.FindGameObjectWithTag("Player");
     }
 
-    private Vector3 GetDistanceVector()
-    {
-        return new Vector3(_player.transform.position.x - gameObject.transform.position.x, _player.transform.position.y - gameObject.transform.position.y, 0);
-    }
-
     // Update is called once per frame
     void Update()
     {
-        transform.position += new Vector3(GetDistanceVector().x * _enemyMoveSpeed * Time.deltaTime, GetDistanceVector().y * _enemyMoveSpeed * Time.deltaTime, 0);
+        transform.position = Vector3.MoveTowards(transform.position, _player.transform.position, _enemyMoveSpeed * Time.deltaTime);
     }
 }

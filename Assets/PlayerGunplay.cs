@@ -24,6 +24,8 @@ public class PlayerGunplay : MonoBehaviour
     [SerializeField] private float _groundPickupMovementLockTimer;
     [SerializeField] private float _timeToDisplayMissedJuggleIndicator;
 
+    [SerializeField] private float _damageDealtByPlayer;
+
     private bool _hasGun = false;
     private bool _touchingGun = false;
     private bool _touchingTarget = false;
@@ -50,17 +52,21 @@ public class PlayerGunplay : MonoBehaviour
         _playerSpriteRenderer.color = color;
     }
 
+    private void Shoot()
+    {
+        Vector2 shotgunHitboxSpawnPos = _playerRigidbody2D.position + new Vector2(_ShotgunHitboxSpawnOffset * Mathf.Cos(_playerRigidbody2D.rotation * Mathf.Deg2Rad), _ShotgunHitboxSpawnOffset * Mathf.Sin(_playerRigidbody2D.rotation * Mathf.Deg2Rad));
+        Instantiate(_shotgunHitbox, shotgunHitboxSpawnPos, transform.rotation);
+    }
+
     /// <summary>
     /// Shoots via instantiating the shotgun hitbox and throwing the gun
     /// </summary>
     /// 
-    private void Shoot()
+    private void ShootAndThrowGun()
     {
         _targetMovement.LockTargetPosition();
 
-
-        Vector2 shotgunHitboxSpawnPos = _playerRigidbody2D.position + new Vector2(_ShotgunHitboxSpawnOffset * Mathf.Cos(_playerRigidbody2D.rotation * Mathf.Deg2Rad), _ShotgunHitboxSpawnOffset * Mathf.Sin(_playerRigidbody2D.rotation * Mathf.Deg2Rad));
-        Instantiate(_shotgunHitbox, shotgunHitboxSpawnPos, transform.rotation);
+        Shoot();
 
         Instantiate(_thrownGun, _playerRigidbody2D.position, Quaternion.identity);
 
@@ -128,14 +134,26 @@ public class PlayerGunplay : MonoBehaviour
         return _hasGun;
     }
 
+    public float GetDamageDealtByPlayer()
+    {
+        return _damageDealtByPlayer;
+    }
+
     // Update is called once per frame
     void Update()
-    {   
+    {
         if (Input.GetMouseButtonDown(0)) //if left click
         {
-            if(_hasGun)
+            if (_hasGun)
             {
-                Shoot();
+                if (_playerMovement.IsDashing() || _playerMovement.IsPostDashState())
+                {
+                    Shoot();
+                }
+                else
+                {
+                    ShootAndThrowGun();
+                }
             }
         }
 

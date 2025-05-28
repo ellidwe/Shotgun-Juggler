@@ -11,6 +11,8 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D _playerRigidbody2D;
     private SpriteRenderer _playerSpriteRenderer;
 
+    
+
     [SerializeField] private Camera _sceneCamera;
 
     private Vector2 _lastDirectionMoved;
@@ -22,6 +24,10 @@ public class PlayerMovement : MonoBehaviour
 
     private bool _dashing = false;
     private float _dashTimer;
+
+    private bool _postDashState = false;
+    [SerializeField] private float _postDashStateTimer;
+    
     private Vector3 _dashStartPoint;
     private Vector3 _dashPath;
 
@@ -110,6 +116,13 @@ public class PlayerMovement : MonoBehaviour
         _dashStartPoint = _playerRigidbody2D.position;
         _dashPath = new Vector3(_lastDirectionMoved.x * _dashDistance, _lastDirectionMoved.y * _dashDistance, 0);
 
+        //cancels ground pickup timer (BOTTOM 3 LOC NEED TO HAVE REFERENCES TO THEIR CLASSES IN THIS CLASS, EASY FIX BUT OUT OF TIME) THIS WHOLE PART SHOULD BE REWRITTEN SMARTER AT SOME POINT
+        _movementFrozen = false;
+        _turningFrozen = false;
+        //_targetMovement.MakeTargetOpaque();
+        //_hasGun = true;
+        //_playerGunplay.ChangeSpriteColor(Color.black);
+
         _playerSpriteRenderer.color = Color.blue;
 
         _dashing = true;
@@ -128,8 +141,30 @@ public class PlayerMovement : MonoBehaviour
         {
             _dashing = false;
             _movementFrozen = false;
+
             _playerSpriteRenderer.color = Color.gray;
+
+            StartCoroutine(RunPostDashState());
         }
+    }
+
+    private IEnumerator RunPostDashState()
+    {
+        _postDashState = true;
+
+        yield return new WaitForSeconds(_postDashStateTimer);
+
+        _postDashState = false;
+    }
+
+    public bool IsDashing()
+    {
+        return _dashing;
+    }
+
+    public bool IsPostDashState()
+    {
+        return _postDashState;
     }
 
     // Update is called once per frame
@@ -143,9 +178,14 @@ public class PlayerMovement : MonoBehaviour
         if(_dashing)
         {
             moveViaDash(_dashPath);
+            Debug.Log("dashing");
         }
         else
         {
+            if(_postDashState)
+            {
+                Debug.Log("postDashState");
+            }
             ChangeMovement();
         }
         AssignMousePosition();
