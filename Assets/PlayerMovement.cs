@@ -10,8 +10,10 @@ public class PlayerMovement : MonoBehaviour
 
     private Rigidbody2D _playerRigidbody2D;
     private SpriteRenderer _playerSpriteRenderer;
+    private PlayerGunplay _playerGunplay;
 
-    
+    private GameObject _target;
+    private TargetMovement _targetMovement;
 
     [SerializeField] private Camera _sceneCamera;
 
@@ -37,6 +39,10 @@ public class PlayerMovement : MonoBehaviour
     {
         _playerRigidbody2D = gameObject.GetComponent<Rigidbody2D>();
         _playerSpriteRenderer = transform.GetChild(0).GetComponent<SpriteRenderer>();
+        _playerGunplay = gameObject.GetComponent<PlayerGunplay>();
+
+        _target = GameObject.FindGameObjectWithTag("Target");
+        _targetMovement = _target.GetComponent<TargetMovement>();
     }
 
     public void SetMovementFrozen(bool _movFrozen)
@@ -116,13 +122,18 @@ public class PlayerMovement : MonoBehaviour
         _dashStartPoint = _playerRigidbody2D.position;
         _dashPath = new Vector3(_lastDirectionMoved.x * _dashDistance, _lastDirectionMoved.y * _dashDistance, 0);
 
-        //cancels ground pickup timer (BOTTOM 3 LOC NEED TO HAVE REFERENCES TO THEIR CLASSES IN THIS CLASS, EASY FIX BUT OUT OF TIME) THIS WHOLE PART SHOULD BE REWRITTEN SMARTER AT SOME POINT
-        _movementFrozen = false;
-        _turningFrozen = false;
-        //_targetMovement.MakeTargetOpaque();
-        //_hasGun = true;
-        //_playerGunplay.ChangeSpriteColor(Color.black);
+        //cancels ground pickup timer THIS WHOLE PART SHOULD BE REWRITTEN SMARTER AT SOME POINT
+        if(_playerGunplay.IsPickingGunUpFromGround())
+        {
+            _playerGunplay.SetPickingUpGunFromGround(false);
 
+            _movementFrozen = false;
+            _turningFrozen = false;
+
+            _targetMovement.MakeTargetOpaque();
+
+            _playerGunplay.SetHasGun(true);
+        }
         _playerSpriteRenderer.color = Color.blue;
 
         _dashing = true;

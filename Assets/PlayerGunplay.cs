@@ -26,6 +26,7 @@ public class PlayerGunplay : MonoBehaviour
 
     [SerializeField] private float _damageDealtByPlayer;
 
+    private bool _pickingGunUpFromGround = false;
     private bool _hasGun = false;
     private bool _touchingGun = false;
     private bool _touchingTarget = false;
@@ -74,8 +75,6 @@ public class PlayerGunplay : MonoBehaviour
         _airPickupPermitted = true;
 
         _gunScript.SetInAir(true);
-
-        ChangeSpriteColor(Color.grey);
     }
 
     /// <summary>
@@ -89,6 +88,8 @@ public class PlayerGunplay : MonoBehaviour
 
     private IEnumerator GroundPickupFreeze()
     {
+        _pickingGunUpFromGround = true;
+
         _playerMovement.SetMovementFrozen(true);
         _playerMovement.SetTurningFrozen(true);
 
@@ -96,13 +97,17 @@ public class PlayerGunplay : MonoBehaviour
 
         yield return new WaitForSeconds(_groundPickupMovementLockTimer);
 
-        _playerMovement.SetMovementFrozen(false);
-        _playerMovement.SetTurningFrozen(false);
+        if(_pickingGunUpFromGround)
+        {
+            _pickingGunUpFromGround = false;
 
-        _targetMovement.MakeTargetOpaque();
+            _playerMovement.SetMovementFrozen(false);
+            _playerMovement.SetTurningFrozen(false);
 
-        _hasGun = true;
-        ChangeSpriteColor(Color.black);
+            _targetMovement.MakeTargetOpaque();
+
+            _hasGun = true;
+        }
     }
 
     private void PickupGunFromAir()
@@ -113,7 +118,6 @@ public class PlayerGunplay : MonoBehaviour
         Destroy(GameObject.FindGameObjectWithTag("ThrownGunProjectileShadow"));
 
         _hasGun = true;
-        ChangeSpriteColor(Color.black);
     }
     private void IndicateMissedJuggleAndDisallowJuggle()
     {
@@ -134,6 +138,21 @@ public class PlayerGunplay : MonoBehaviour
         return _hasGun;
     }
 
+    public void SetHasGun(bool hasGun)
+    {
+        _hasGun = hasGun;
+    }
+
+    public bool IsPickingGunUpFromGround()
+    {
+        return _pickingGunUpFromGround;
+    }
+
+    public void SetPickingUpGunFromGround(bool pickingUpGunFromGround)
+    {
+        _pickingGunUpFromGround = pickingUpGunFromGround;
+    }
+
     public float GetDamageDealtByPlayer()
     {
         return _damageDealtByPlayer;
@@ -142,6 +161,18 @@ public class PlayerGunplay : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(!_playerMovement.IsDashing())
+        {
+            if(_hasGun)
+            {
+                ChangeSpriteColor(Color.black);
+            }
+            else
+            {
+                ChangeSpriteColor(Color.gray);
+            }
+        }
+
         if (Input.GetMouseButtonDown(0)) //if left click
         {
             if (_hasGun)
