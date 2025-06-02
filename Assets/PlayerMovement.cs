@@ -32,8 +32,14 @@ public class PlayerMovement : MonoBehaviour
     
     private Vector3 _dashStartPoint;
     private Vector3 _dashPath;
-
     private int _dashStocks = 100; //test value
+
+    private int _previousDirectionMovedFor360;
+    private int _lastDirectionMovedFor360;
+    private int _correctDirectionToMove = 0;
+    private int _correctDirectionChain;
+    [SerializeField] private float _time360BonusLasts;
+    private bool _isIn360Bonus;
 
     private void Start()
     {
@@ -71,6 +77,8 @@ public class PlayerMovement : MonoBehaviour
         _currentMovement.x = Input.GetAxisRaw("Horizontal");
         _currentMovement.y = Input.GetAxisRaw("Vertical");
 
+        AssignLastDirectionMovedFor360();
+
         if (Mathf.Abs(_currentMovement.x) > 0 && Mathf.Abs(_currentMovement.y) > 0)
         {
             _currentMovement.x /= Mathf.Sqrt(2);
@@ -80,6 +88,63 @@ public class PlayerMovement : MonoBehaviour
         if (_currentMovement.x != 0 || _currentMovement.y != 0)
         {
             _lastDirectionMoved = _currentMovement;
+        }
+    }
+
+    private void AssignLastDirectionMovedFor360()
+    {
+        switch (_currentMovement.y)
+        {
+            case -1f:
+                switch (_currentMovement.x)
+                {
+                    case -1f:
+                        _lastDirectionMovedFor360 = 1;
+                        break;
+
+                    case 0f:
+                        _lastDirectionMovedFor360 = 2;
+                        break;
+
+                    case 1f:
+                        _lastDirectionMovedFor360 = 3;
+                        break;
+                }
+                break;
+
+            case 0f:
+                switch (_currentMovement.x)
+                {
+                    case -1f:
+                        _lastDirectionMovedFor360 = 4;
+                        break;
+
+                    case 0f:
+                        _lastDirectionMovedFor360 = 5;
+                        break;
+
+                    case 1f:
+                        _lastDirectionMovedFor360 = 6;
+                        break;
+                }
+                break;
+
+            case 1f:
+                switch (_currentMovement.x)
+                {
+                    case -1f:
+                        _lastDirectionMovedFor360 = 7;
+                        break;
+
+                    case 0f:
+                        _lastDirectionMovedFor360 = 8;
+                        break;
+
+                    case 1f:
+                        _lastDirectionMovedFor360 = 9;
+                        break;
+                }
+                break;
         }
     }
 
@@ -168,6 +233,101 @@ public class PlayerMovement : MonoBehaviour
         _postDashState = false;
     }
 
+    private void HandleMovement360()
+    {
+        if (_lastDirectionMovedFor360 == _correctDirectionToMove)
+        {
+            _correctDirectionChain++;
+            //Debug.Log("correct direction chain: " + _correctDirectionChain);
+        }
+        else if (_lastDirectionMovedFor360 == _previousDirectionMovedFor360)
+        {
+
+        }
+        else
+        {
+            _correctDirectionChain = 0;
+            //Debug.Log("wrong dir!");
+        }
+
+        if(_correctDirectionChain == 8)
+        {
+            Debug.Log("did360");
+            StartCoroutine(Give360Bonus());
+
+            _correctDirectionChain = 0;
+        }
+
+        AssignCorrectDirection();
+
+        _previousDirectionMovedFor360 = _lastDirectionMovedFor360;
+    }
+
+    private IEnumerator Give360Bonus()
+    {
+        _isIn360Bonus = true;
+
+        _playerGunplay.SetDamageDealtByPlayer(_playerGunplay.GetDamageDealtByPlayer() * 2);
+
+        yield return new WaitForSeconds(_time360BonusLasts);
+
+        _isIn360Bonus = false;
+
+        _playerGunplay.SetDamageDealtByPlayer(_playerGunplay.GetDamageDealtByPlayer() / 2);
+    }
+
+    public bool IsIn360Bonus()
+    {
+        return _isIn360Bonus;
+    }
+
+    public void SetIn360Bonus(bool isIn360Bonus)
+    {
+        _isIn360Bonus = isIn360Bonus;
+    }
+
+    private void AssignCorrectDirection()
+    {
+        switch (_lastDirectionMovedFor360)
+        {
+            case 1:
+                _correctDirectionToMove = 4;
+                break;
+
+            case 2:
+                _correctDirectionToMove = 1;
+                break;
+
+            case 3:
+                _correctDirectionToMove = 2;
+                break;
+
+            case 4:
+                _correctDirectionToMove = 7;
+                break;
+
+            case 5:
+                _correctDirectionToMove = 0;
+                break;
+
+            case 6:
+                _correctDirectionToMove = 3;
+                break;
+
+            case 7:
+                _correctDirectionToMove = 8;
+                break;
+
+            case 8:
+                _correctDirectionToMove = 9;
+                break;
+
+            case 9:
+                _correctDirectionToMove = 6;
+                break;
+        }
+    }
+
     public bool IsDashing()
     {
         return _dashing;
@@ -181,6 +341,8 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        HandleMovement360();
+
         if (Input.GetKeyDown(KeyCode.Space) && _dashStocks > 0 && !_dashing)
         {
             InitiateDash();
@@ -189,13 +351,13 @@ public class PlayerMovement : MonoBehaviour
         if(_dashing)
         {
             moveViaDash(_dashPath);
-            Debug.Log("dashing");
+            //Debug.Log("dashing");
         }
         else
         {
             if(_postDashState)
             {
-                Debug.Log("postDashState");
+                //Debug.Log("postDashState");
             }
             ChangeMovement();
         }

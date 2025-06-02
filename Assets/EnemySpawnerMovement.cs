@@ -9,20 +9,16 @@ public class EnemySpawnerMovement : MonoBehaviour
 
     private int _nextPoint = 1;
 
-    private float[,] _travelToList = new float[12, 2]
+    private float[,] _travelToList = new float[8, 2]
     {
-        {0, 4},
-        {3.3f, 2.6f},
-        {6.6f, 1.3f},
-        {10, 0},
-        {6.6f, -1.3f},
-        {3.3f, -2.6f},
-        {0, -4},
-        {-3.3f, -2.6f},
-        {-6.6f, -1.3f},
+        {0f, 4f},
+        {5f, 3f},
+        {10f, 0f},
+        {5f, -3f},
+        {0f, -4f},
+        {-5f, -3f},
         {-10, 0},
-        {-6.6f, 1.3f},
-        {-3.3f, 2.6f},
+        {-5f, 3f},
     };  
         
     // Start is called before the first frame update
@@ -38,7 +34,6 @@ public class EnemySpawnerMovement : MonoBehaviour
 
         if (Vector3.Distance(transform.position, new Vector3(_travelToList[_nextPoint, 0], _travelToList[_nextPoint, 1], 0)) <= _distanceToChangeTargetPoint)
         {
-            Debug.Log(_nextPoint);
             if (_nextPoint == _travelToList.GetLength(0) - 1)
             {
                 _nextPoint = 0;

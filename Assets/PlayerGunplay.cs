@@ -55,6 +55,8 @@ public class PlayerGunplay : MonoBehaviour
 
     private void Shoot()
     {
+        _playerMovement.SetIn360Bonus(false);
+
         Vector2 shotgunHitboxSpawnPos = _playerRigidbody2D.position + new Vector2(_ShotgunHitboxSpawnOffset * Mathf.Cos(_playerRigidbody2D.rotation * Mathf.Deg2Rad), _ShotgunHitboxSpawnOffset * Mathf.Sin(_playerRigidbody2D.rotation * Mathf.Deg2Rad));
         Instantiate(_shotgunHitbox, shotgunHitboxSpawnPos, transform.rotation);
     }
@@ -158,20 +160,36 @@ public class PlayerGunplay : MonoBehaviour
         return _damageDealtByPlayer;
     }
 
+    public void SetDamageDealtByPlayer(float newDmg)
+    {
+        _damageDealtByPlayer = newDmg;
+    }
+
+    private void ManageSpriteColor()
+    {
+        if(_playerMovement.IsDashing())
+        {
+            ChangeSpriteColor(Color.blue);
+        }
+        else if(_playerMovement.IsIn360Bonus())
+        {
+            ChangeSpriteColor(Color.yellow);
+        }
+        else if(_hasGun)
+        {
+            ChangeSpriteColor(Color.black);
+        }
+        else
+        {
+            ChangeSpriteColor(Color.gray);
+        }
+            
+    }
+
     // Update is called once per frame
     void Update()
     {
-        if(!_playerMovement.IsDashing())
-        {
-            if(_hasGun)
-            {
-                ChangeSpriteColor(Color.black);
-            }
-            else
-            {
-                ChangeSpriteColor(Color.gray);
-            }
-        }
+        ManageSpriteColor();
 
         if (Input.GetMouseButtonDown(0)) //if left click
         {
