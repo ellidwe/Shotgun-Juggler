@@ -500,6 +500,8 @@ GameObject:
   - component: {fileID: 946745597}
   - component: {fileID: 946745599}
   - component: {fileID: 946745600}
+  - component: {fileID: 946745601}
+  - component: {fileID: 946745602}
   m_Layer: 0
   m_Name: PlayerChar
   m_TagString: Player
@@ -563,8 +565,6 @@ MonoBehaviour:
   _dashDuration: 0.18
   _sceneCamera: {fileID: 519420031}
   _postDashStateTimer: 0.12
-  _time360BonusLasts: 0.65
-  _timeToAllowNextDirectionIn360: 0.125
 --- !u!61 &946745598
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -603,13 +603,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bac67f21e8c1e67489e7e6565b1514be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _shotgunHitbox: {fileID: 8390530232162017651, guid: 8abcca8c887517243b41252d975610d9, type: 3}
-  _ShotgunHitboxSpawnOffset: 2.13
-  _gun: {fileID: 464612639}
-  _thrownGun: {fileID: 5257378776490503942, guid: 87b75cbd8698d914abb72fd29a75fff2, type: 3}
-  _groundPickupMovementLockTimer: 1
-  _timeToDisplayMissedJuggleIndicator: 0.5
-  _damageDealtByPlayer: 1
+  shotgunHitbox: {fileID: 8390530232162017651, guid: 8abcca8c887517243b41252d975610d9, type: 3}
+  shotgunHitboxSpawnOffset: 2.14
+  gun: {fileID: 464612639}
+  thrownGun: {fileID: 5257378776490503942, guid: 87b75cbd8698d914abb72fd29a75fff2, type: 3}
+  groundPickupMovementLockTimer: 1
+  timeToDisplayMissedJuggleIndicator: 0.3
+  damageDealtByPlayer: 1
 --- !u!114 &946745600
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -623,6 +623,35 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerStartingHealth: 1
+--- !u!114 &946745601
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 946745593}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80d50a808bbac7240a4fa14909773927, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _time360BonusLasts: 0.4
+  _timeToAllowNextDirectionIn360: 0.125
+--- !u!114 &946745602
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 946745593}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73f4e1abfbb37f042a0532d7a1406983, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dashDistance: 3.5
+  dashDuration: 0.18
+  postDashStateTimer: 0.12
 --- !u!1 &1125145691
 GameObject:
   m_ObjectHideFlags: 0

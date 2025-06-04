@@ -8,14 +8,14 @@ public class PlayerHealth : MonoBehaviour
 
     private float _playerCurrentHealth;
 
-    private PlayerMovement _playerMovement;
+    private PlayerDash playerDash;
 
     // Start is called before the first frame update
     void Start()
     {
         _playerCurrentHealth = _playerStartingHealth;
 
-        _playerMovement = gameObject.GetComponent<PlayerMovement>();
+        playerDash = gameObject.GetComponent<PlayerDash>();
     }
 
     private void GameOver()
@@ -36,7 +36,7 @@ public class PlayerHealth : MonoBehaviour
     {
         if(collision.tag.Equals("Enemy"))
         {
-            if(!_playerMovement.IsDashing())
+            if(!playerDash.IsDashing())
             {
                 _playerCurrentHealth -= 1; //change later to make it reduce playerhealth by enemy damage unless decide to make one hit kill
             }

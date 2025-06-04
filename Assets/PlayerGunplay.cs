@@ -4,61 +4,66 @@ using UnityEngine;
 
 public class PlayerGunplay : MonoBehaviour
 {
-    private Rigidbody2D _playerRigidbody2D;
-    private PlayerMovement _playerMovement;
+    private Rigidbody2D playerRigidbody2D;
+    private PlayerMovement playerMovement;
+    private PlayerDash playerDash;
+    private Trick360 trick360;
 
-    private SpriteRenderer _playerSpriteRenderer;
-    private Renderer _missedJuggleRenderer;
 
-    [SerializeField] private GameObject _shotgunHitbox;
-    [SerializeField] private float _ShotgunHitboxSpawnOffset;
+    private SpriteRenderer playerSpriteRenderer;
+    private Renderer missedJuggleRenderer;
 
-    [SerializeField] private GameObject _gun;
-    private GunScript _gunScript;
+    [SerializeField] private GameObject shotgunHitbox;
+    [SerializeField] private float shotgunHitboxSpawnOffset;
 
-    [SerializeField] private GameObject _thrownGun;
+    [SerializeField] private GameObject gun;
+    private GunScript gunScript;
 
-    private GameObject _target;
-    private TargetMovement _targetMovement;
+    [SerializeField] private GameObject thrownGun;
 
-    [SerializeField] private float _groundPickupMovementLockTimer;
-    [SerializeField] private float _timeToDisplayMissedJuggleIndicator;
+    private GameObject target;
+    private TargetMovement targetMovement;
 
-    [SerializeField] private float _damageDealtByPlayer;
+    [SerializeField] private float groundPickupMovementLockTimer;
+    [SerializeField] private float timeToDisplayMissedJuggleIndicator;
 
-    private bool _pickingGunUpFromGround = false;
-    private bool _hasGun = false;
-    private bool _touchingGun = false;
-    private bool _touchingTarget = false;
-    private bool _airPickupPermitted;
+    [SerializeField] private float damageDealtByPlayer;
+
+    private bool pickingGunUpFromGround = false;
+    private bool hasGun = false;
+    private bool touchingGun = false;
+    private bool touchingTarget = false;
+    private bool airPickupPermitted;
 
     // Start is called before the first frame update
     void Start()
     {
-        _playerRigidbody2D = gameObject.GetComponent<Rigidbody2D>();
-        _playerMovement = gameObject.GetComponent<PlayerMovement>();
+        playerRigidbody2D = gameObject.GetComponent<Rigidbody2D>();
+        playerMovement = gameObject.GetComponent<PlayerMovement>();
+        playerDash = gameObject.GetComponent<PlayerDash>();
+        trick360 = gameObject.GetComponent<Trick360>();
 
-        _playerSpriteRenderer = transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>();
-        _missedJuggleRenderer = transform.GetChild(2).gameObject.GetComponent<Renderer>();
-        _missedJuggleRenderer.enabled = false;
+        playerSpriteRenderer = transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>();
+        missedJuggleRenderer = transform.GetChild(2).gameObject.GetComponent<Renderer>();
+        missedJuggleRenderer.enabled = false;
 
-        _gunScript = _gun.GetComponent<GunScript>();
+        gunScript = gun.GetComponent<GunScript>();
 
-        _target = GameObject.FindGameObjectWithTag("Target");
-        _targetMovement = _target.GetComponent<TargetMovement>();
+        target = GameObject.FindGameObjectWithTag("Target");
+        targetMovement = target.GetComponent<TargetMovement>();
     }
 
     public void ChangeSpriteColor(Color color)
     {
-        _playerSpriteRenderer.color = color;
+        playerSpriteRenderer.color = color;
     }
 
     private void Shoot()
     {
-        _playerMovement.SetIn360Bonus(false);
+        trick360.SetIn360Bonus(false);
 
-        Vector2 shotgunHitboxSpawnPos = _playerRigidbody2D.position + new Vector2(_ShotgunHitboxSpawnOffset * Mathf.Cos(_playerRigidbody2D.rotation * Mathf.Deg2Rad), _ShotgunHitboxSpawnOffset * Mathf.Sin(_playerRigidbody2D.rotation * Mathf.Deg2Rad));
-        Instantiate(_shotgunHitbox, shotgunHitboxSpawnPos, transform.rotation);
+        Vector2 shotgunHitboxSpawnPos = playerRigidbody2D.position + new Vector2(shotgunHitboxSpawnOffset * Mathf.Cos(playerRigidbody2D.rotation * Mathf.Deg2Rad), shotgunHitboxSpawnOffset * Mathf.Sin(playerRigidbody2D.rotation * Mathf.Deg2Rad));
+        Instantiate(shotgunHitbox, shotgunHitboxSpawnPos, transform.rotation);
     }
 
     /// <summary>
@@ -67,16 +72,16 @@ public class PlayerGunplay : MonoBehaviour
     /// 
     private void ShootAndThrowGun()
     {
-        _targetMovement.LockTargetPosition();
+        targetMovement.LockTargetPosition();
 
         Shoot();
 
-        Instantiate(_thrownGun, _playerRigidbody2D.position, Quaternion.identity);
+        Instantiate(thrownGun, playerRigidbody2D.position, Quaternion.identity);
 
-        _hasGun = false;
-        _airPickupPermitted = true;
+        hasGun = false;
+        airPickupPermitted = true;
 
-        _gunScript.SetInAir(true);
+        gunScript.SetInAir(true);
     }
 
     /// <summary>
@@ -84,98 +89,98 @@ public class PlayerGunplay : MonoBehaviour
     /// </summary>
     private void PickupGunFromGround()
     {
-        _gunScript.DisappearGun();
+        gunScript.DisappearGun();
         StartCoroutine(GroundPickupFreeze());
     }
 
     private IEnumerator GroundPickupFreeze()
     {
-        _pickingGunUpFromGround = true;
+        pickingGunUpFromGround = true;
 
-        _playerMovement.SetMovementFrozen(true);
-        _playerMovement.SetTurningFrozen(true);
+        playerMovement.SetMovementFrozen(true);
+        playerMovement.SetTurningFrozen(true);
 
-        _targetMovement.MakeTargetTransparent();
+        targetMovement.MakeTargetTransparent();
 
-        yield return new WaitForSeconds(_groundPickupMovementLockTimer);
+        yield return new WaitForSeconds(groundPickupMovementLockTimer);
 
-        if(_pickingGunUpFromGround)
+        if(pickingGunUpFromGround)
         {
-            _pickingGunUpFromGround = false;
+            pickingGunUpFromGround = false;
 
-            _playerMovement.SetMovementFrozen(false);
-            _playerMovement.SetTurningFrozen(false);
+            playerMovement.SetMovementFrozen(false);
+            playerMovement.SetTurningFrozen(false);
 
-            _targetMovement.MakeTargetOpaque();
+            targetMovement.MakeTargetOpaque();
 
-            _hasGun = true;
+            hasGun = true;
         }
     }
 
     private void PickupGunFromAir()
     {
-        _gunScript.SetGunPickupable(false);
+        gunScript.SetGunPickupable(false);
 
         Destroy(GameObject.FindGameObjectWithTag("ThrownGun"));
         Destroy(GameObject.FindGameObjectWithTag("ThrownGunProjectileShadow"));
 
-        _hasGun = true;
+        hasGun = true;
     }
     private void IndicateMissedJuggleAndDisallowJuggle()
     {
-        _airPickupPermitted = false;
+        airPickupPermitted = false;
         StartCoroutine(ShowMissedJuggleIndicator());
     }
     private IEnumerator ShowMissedJuggleIndicator()
     {
-        _missedJuggleRenderer.enabled = true;
+        missedJuggleRenderer.enabled = true;
 
-        yield return new WaitForSeconds(_timeToDisplayMissedJuggleIndicator);
+        yield return new WaitForSeconds(timeToDisplayMissedJuggleIndicator);
 
-        _missedJuggleRenderer.enabled = false;
+        missedJuggleRenderer.enabled = false;
     }
 
     public bool IsHasGun()
     {
-        return _hasGun;
+        return hasGun;
     }
 
     public void SetHasGun(bool hasGun)
     {
-        _hasGun = hasGun;
+        this.hasGun = hasGun;
     }
 
     public bool IsPickingGunUpFromGround()
     {
-        return _pickingGunUpFromGround;
+        return pickingGunUpFromGround;
     }
 
     public void SetPickingUpGunFromGround(bool pickingUpGunFromGround)
     {
-        _pickingGunUpFromGround = pickingUpGunFromGround;
+        pickingGunUpFromGround = pickingUpGunFromGround;
     }
 
     public float GetDamageDealtByPlayer()
     {
-        return _damageDealtByPlayer;
+        return damageDealtByPlayer;
     }
 
     public void SetDamageDealtByPlayer(float newDmg)
     {
-        _damageDealtByPlayer = newDmg;
+        damageDealtByPlayer = newDmg;
     }
 
     private void ManageSpriteColor()
     {
-        if(_playerMovement.IsDashing())
+        if(playerDash.IsDashing())
         {
             ChangeSpriteColor(Color.blue);
         }
-        else if(_playerMovement.IsIn360Bonus())
+        else if(trick360.IsIn360Bonus())
         {
             ChangeSpriteColor(Color.yellow);
         }
-        else if(_hasGun)
+        else if(hasGun)
         {
             ChangeSpriteColor(Color.black);
         }
@@ -193,9 +198,9 @@ public class PlayerGunplay : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0)) //if left click
         {
-            if (_hasGun)
+            if (hasGun)
             {
-                if (_playerMovement.IsDashing() || _playerMovement.IsPostDashState())
+                if (playerDash.IsDashing() || playerDash.IsPostDashState())
                 {
                     Shoot();
                 }
@@ -208,13 +213,13 @@ public class PlayerGunplay : MonoBehaviour
 
         if (Input.GetMouseButtonDown(1)) //if right click
         {
-            if(_touchingGun && _gunScript.IsOnGround()) 
+            if(touchingGun && gunScript.IsOnGround()) 
             {
                 PickupGunFromGround();
             }
-            else if(_gunScript.IsInAir())
+            else if(gunScript.IsInAir())
             {
-                if (_touchingTarget && _gunScript.IsGunPickupable() && _airPickupPermitted)
+                if (touchingTarget && gunScript.IsGunPickupable() && airPickupPermitted)
                 {
                     PickupGunFromAir();
                 }
@@ -230,11 +235,11 @@ public class PlayerGunplay : MonoBehaviour
     {
         if (collision.tag.Equals("Gun"))
         {
-            _touchingGun = true;
+            touchingGun = true;
         }
         if (collision.tag.Equals("Target"))
         {
-            _touchingTarget = true;
+            touchingTarget = true;
         }
     }
 
@@ -242,11 +247,11 @@ public class PlayerGunplay : MonoBehaviour
     {
         if (collision.tag.Equals("Gun"))
         {
-            _touchingGun = false;
+            touchingGun = false;
         }
         if (collision.tag.Equals("Target"))
         {
-            _touchingTarget = false;
+            touchingTarget = false;
         }
     }
 }
