@@ -560,11 +560,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83202379bb1e65949816b40b9a4fa646, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _moveSpd: 6
-  _dashDistance: 3.5
-  _dashDuration: 0.18
+  moveSpd: 6
   _sceneCamera: {fileID: 519420031}
-  _postDashStateTimer: 0.12
 --- !u!61 &946745598
 BoxCollider2D:
   m_ObjectHideFlags: 0
