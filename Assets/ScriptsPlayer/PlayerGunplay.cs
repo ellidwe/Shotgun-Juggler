@@ -26,6 +26,7 @@ public class PlayerGunplay : MonoBehaviour
 
     [SerializeField] private float groundPickupMovementLockTimer;
     [SerializeField] private float timeToDisplayMissedJuggleIndicator;
+    [SerializeField] private float timeAirPickupBonusLasts;
 
     [SerializeField] private float damageDealtByPlayer;
 
@@ -34,6 +35,9 @@ public class PlayerGunplay : MonoBehaviour
     private bool touchingGun = false;
     private bool touchingTarget = false;
     private bool airPickupPermitted;
+
+    private bool isInAirPickupBonus;
+    
 
     // Start is called before the first frame update
     void Start()
@@ -61,8 +65,10 @@ public class PlayerGunplay : MonoBehaviour
     private void Shoot()
     {
         trick360.SetIn360Bonus(false);
+        isInAirPickupBonus = false;
 
         Vector2 shotgunHitboxSpawnPos = playerRigidbody2D.position + new Vector2(shotgunHitboxSpawnOffset * Mathf.Cos(playerRigidbody2D.rotation * Mathf.Deg2Rad), shotgunHitboxSpawnOffset * Mathf.Sin(playerRigidbody2D.rotation * Mathf.Deg2Rad));
+
         Instantiate(shotgunHitbox, shotgunHitboxSpawnPos, transform.rotation);
     }
 
@@ -125,12 +131,29 @@ public class PlayerGunplay : MonoBehaviour
         Destroy(GameObject.FindGameObjectWithTag("ThrownGunProjectileShadow"));
 
         hasGun = true;
+
+        StartCoroutine(AirPickupDamageBonus());
     }
+
+    private IEnumerator AirPickupDamageBonus()
+    {
+        isInAirPickupBonus = true;
+
+        damageDealtByPlayer *= 2;
+
+        yield return new WaitForSeconds(timeAirPickupBonusLasts);
+
+        isInAirPickupBonus = false;
+
+        damageDealtByPlayer /= 2;
+    }
+
     private void IndicateMissedJuggleAndDisallowJuggle()
     {
         airPickupPermitted = false;
         StartCoroutine(ShowMissedJuggleIndicator());
     }
+
     private IEnumerator ShowMissedJuggleIndicator()
     {
         missedJuggleRenderer.enabled = true;
@@ -176,7 +199,7 @@ public class PlayerGunplay : MonoBehaviour
         {
             ChangeSpriteColor(Color.blue);
         }
-        else if(trick360.IsIn360Bonus())
+        else if(trick360.IsIn360Bonus() || isInAirPickupBonus)
         {
             ChangeSpriteColor(Color.yellow);
         }

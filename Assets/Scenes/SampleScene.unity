@@ -606,6 +606,7 @@ MonoBehaviour:
   thrownGun: {fileID: 5257378776490503942, guid: 87b75cbd8698d914abb72fd29a75fff2, type: 3}
   groundPickupMovementLockTimer: 1
   timeToDisplayMissedJuggleIndicator: 0.3
+  timeAirPickupBonusLasts: 0.3
   damageDealtByPlayer: 1
 --- !u!114 &946745600
 MonoBehaviour:
@@ -677,7 +678,7 @@ Transform:
   m_GameObject: {fileID: 1125145691}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.52775806, y: 0.53354496, z: 0.34860826}
+  m_LocalScale: {x: 0.34271985, y: 0.3427199, z: 0.22638209}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -1083,7 +1084,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5048657801780568504, guid: 91f5bf186ae08914693e9ed5b4fd0d8f, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 91f5bf186ae08914693e9ed5b4fd0d8f, type: 3}
@@ -1285,7 +1286,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7948041964748515103, guid: 3de2f846dbc83154785fd71bafacda85, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 1909093647994610810, guid: 3de2f846dbc83154785fd71bafacda85, type: 3}

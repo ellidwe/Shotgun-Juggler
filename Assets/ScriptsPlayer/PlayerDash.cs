@@ -22,7 +22,7 @@ public class PlayerDash : MonoBehaviour
 
     private Vector3 dashStartPoint;
     private Vector3 dashPath;
-    private int dashStocks = 100; //test value
+    private int dashStocks = 3;
 
     // Start is called before the first frame update
     void Start()
@@ -98,6 +98,16 @@ public class PlayerDash : MonoBehaviour
     public bool IsPostDashState()
     {
         return postDashState;
+    }
+
+    public int GetDashStocks()
+    {
+        return dashStocks;
+    }
+
+    public void SetDashStocks(int newDashStocks)
+    {
+        dashStocks = newDashStocks;
     }
 
     // Update is called once per frame

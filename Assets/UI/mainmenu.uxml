@@ -2,7 +2,7 @@
     <Style src="project://database/Assets/UI/main-menu.uss?fileID=7433441132597879392&amp;guid=26e7dfb2994c79444a5bedfdb375b22d&amp;type=3#main-menu" />
     <ui:VisualElement name="Panel" class="panel" style="height: auto; width: auto; flex-direction: column-reverse; justify-content: center; align-items: center; min-width: 100%; min-height: 100%;">
         <ui:VisualElement name="Container" class="menu" style="align-items: center; height: 331px; width: 433px; justify-content: center;">
-            <ui:Label text="SHOTGUN JUGGLER GAME PROTOTYPE&#10;" display-tooltip-when-elided="true" style="height: 32px; width: 496px; -unity-text-align: upper-center; top: -159px; font-size: 35px; color: rgb(0, 0, 0);" />
+            <ui:Label text="SHOTGUN JUGGLER GAME PROTOTYPE&#10;(only start button works lmao)" display-tooltip-when-elided="true" style="height: 96px; width: 494px; -unity-text-align: upper-center; top: -159px; font-size: 35px; color: rgb(0, 0, 0);" />
             <ui:Button text="Tutorial" display-tooltip-when-elided="true" name="TutorialButton" style="bottom: auto; right: auto; position: absolute; top: 266px; left: 0;" />
             <ui:Button text="Start" display-tooltip-when-elided="true" name="StartButton" style="align-items: auto; bottom: auto; position: absolute; top: 266px; left: 164px; width: 100px;" />
             <ui:Button text="Exit" display-tooltip-when-elided="true" name="ExitButton" style="left: 328px; bottom: auto; position: absolute; top: 266px;" />

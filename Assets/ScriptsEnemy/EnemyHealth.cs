@@ -6,14 +6,16 @@ public class EnemyHealth : MonoBehaviour
 {
     [SerializeField] private float _enemyHp;
 
-    private GameObject _player;
-    private PlayerGunplay _playerGunplay;
+    private GameObject player;
+    private PlayerGunplay playerGunplay;
+    private PlayerDash playerDash;
 
     // Start is called before the first frame update
     void Start()
     {
-        _player = GameObject.FindGameObjectWithTag("Player");
-        _playerGunplay = _player.GetComponent<PlayerGunplay>();
+        player = GameObject.FindGameObjectWithTag("Player");
+        playerGunplay = player.GetComponent<PlayerGunplay>();
+        playerDash = player.GetComponent<PlayerDash>();
     }
 
     public void ReduceEnemyHP(float amountToReduceHPBy)
@@ -24,6 +26,8 @@ public class EnemyHealth : MonoBehaviour
     void KillEnemy()
     {
         Destroy(gameObject);
+
+        playerDash.SetDashStocks(playerDash.GetDashStocks() + 1);
     }
 
     // Update is called once per frame
@@ -39,7 +43,7 @@ public class EnemyHealth : MonoBehaviour
     {
         if(collision.tag == "ShotgunHitbox")
         {
-            ReduceEnemyHP(_playerGunplay.GetDamageDealtByPlayer());
+            ReduceEnemyHP(playerGunplay.GetDamageDealtByPlayer());
         }
     }
 }
